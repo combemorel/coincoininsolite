@@ -52,7 +52,7 @@
         android:animateLayoutChanges="false" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/logo"
         android:layout_width="104dp"
         android:layout_height="81dp"
         android:layout_alignParentStart="true"
@@ -63,6 +63,7 @@
         android:layout_marginLeft="153dp"
         android:layout_marginEnd="155dp"
         android:layout_marginRight="153dp"
+        android:contentDescription="@string/desc_logo"
         app:srcCompat="@drawable/logo" />
 
 </RelativeLayout>

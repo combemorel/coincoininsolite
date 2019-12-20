@@ -5,7 +5,9 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,6 +20,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,12 +42,15 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     private GoogleMap myMap;
     private ProgressDialog myProgress;
     private static final String MYTAG = "MYTAG";
+    private SearchView searchView;
+    private ImageButton btnPicture;
 
 
     // Request Code to ask the user for permission to view their current location (***).
@@ -64,12 +71,42 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         myProgress.setCancelable(true);
         // Display Progress Bar.
         myProgress.show();
+        searchView = findViewById(R.id.search);
+        btnPicture = findViewById(R.id.buttonPicture);
 
-        SupportMapFragment mapFragment
-                = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment);
+
+        // barre de recherche attacher a la map
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String location = searchView.getQuery().toString();
+                List<Address> addressList  = null;
+
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder( MainActivity.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location,1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                    myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        
         // Set callback listener, on Google Map ready.
         mapFragment.getMapAsync(new OnMapReadyCallback() {
-
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 onMyMapReady(googleMap);
@@ -87,9 +124,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             @Override
             public void onMapLoaded() {
-                askPermissionsAndShowMyLocation();
+
                 // Map loaded. Dismiss this dialog, removing it from the screen.
                 myProgress.dismiss();
+                askPermissionsAndShowMyLocation();
             }
         });
         myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
