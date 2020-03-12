@@ -1,5 +1,4 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppThemeStart" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -16,39 +15,4 @@
         <item name="colorPrimaryDark">@color/colorbar</item>
         <item name="colorAccent">@color/colorbar</item>
     </style>
-
-
-    <!--designs for login and register-->
-    <style name="parent">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="loginParent" parent="parent">
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/loginBkColor</item>
-        <item name="android:focusableInTouchMode">true</item>
-    </style>
-
-
-
-    <style name="loginCard" parent="parent"></style>
-
-    <style name="linearParent" parent="parent">
-        <item name="android:orientation">vertical</item>
-    </style>
-
-
-
-    <style name="viewParent">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="loginButton" parent="viewParent">
-        <item name="android:textColor">@color/whiteTextColor</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-
 </resources>
