@@ -2,12 +2,12 @@
 <resources>
     <color name="colorPrimary">#EBD371</color>
     <color name="colorPrimaryDark">#EBD371</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#E33753</color>
     <color name="colorbar">#45b0d0</color>
 
 
     <color name="colorTextBoxBack">#0A5D5B</color>
     <color name="colorHint">#c3acacac</color>
-    <color name="colorLoginButton">#FFFFFFF</color>
+    <color name="colorLoginButton">#FFFFFF</color>
     <color name="colorInput">#FFFFFF</color>
 </resources>
