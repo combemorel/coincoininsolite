@@ -30,9 +30,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.models.SlideModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 import java.io.IOException;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -54,6 +59,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //now we can create two types of slider first using viewpager
+        //and another using third party library which is easy to use let's get started
+        ImageSlider imageSlider=findViewById(R.id.slider);
+
+        List<SlideModel> slideModels=new ArrayList<>();
+        slideModels.add(new SlideModel("https://picsum.photos/id/896/300/200","Image 1"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/894/300/200","Image 2"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/892/300/200","Image 3"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/891/300/200","Image 4"));
+        imageSlider.setImageList(slideModels,true);
         // Create Progress Bar.
         myProgress = new ProgressDialog(this);
         myProgress.setTitle("Map Loading ...");

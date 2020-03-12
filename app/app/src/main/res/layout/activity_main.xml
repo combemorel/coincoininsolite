@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,6 +9,19 @@
     android:clipToPadding="false"
     android:visibility="visible"
     tools:context=".MainActivity">
+
+    <com.denzcoskun.imageslider.ImageSlider
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="450dp"
+        android:addStatesFromChildren="false"
+        app:auto_cycle="true"
+        app:corner_radius="20"
+        app:delay="0"
+        app:error_image="@drawable/logo"
+        app:period="5000"
+        app:placeholder="@drawable/logo" />
 
     <ImageButton
         android:id="@+id/buttonPicture"
