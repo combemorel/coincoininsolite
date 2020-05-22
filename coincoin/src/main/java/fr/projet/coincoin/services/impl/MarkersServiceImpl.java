@@ -1,0 +1,66 @@
+package fr.projet.coincoin.services.impl;
+
+import fr.projet.coincoin.models.Marker;
+import fr.projet.coincoin.repositories.MarkersRepository;
+import fr.projet.coincoin.services.MarkersService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+
+@Service
+public class MarkersServiceImpl implements MarkersService {
+
+    @Autowired
+    private MarkersRepository markersRepository;
+
+    @Override
+    @Transactional // Pour éviter une TransactionRequiredException
+    public Marker save(Marker markerToAdd) {
+        return this.markersRepository.save(markerToAdd);
+    }
+
+    @Override
+    public List<Marker> getAll() {
+        return (List<Marker>) this.markersRepository.findAll();
+    }
+
+    @Override
+    public Marker getById(Integer markerId) {
+        return this.markersRepository.findById(markerId).orElseGet(null);
+    }
+
+    @Override
+    @Transactional // Pour éviter une TransactionRequiredException
+    public void update(Marker markerToUpdate) {
+        if (this.getById(markerToUpdate.getId()) != null) {
+            this.markersRepository.save(markerToUpdate);
+        }
+    }
+
+    @Override
+    @Transactional // Pour éviter une TransactionRequiredException
+    public void delete(Marker markerToDelete) {
+        if (this.getById(markerToDelete.getId()) != null) {
+            this.markersRepository.delete(markerToDelete);
+        }
+    }
+
+    @Override
+    public List<Marker> getByLatLng(Double lat, Double lng) {
+        return this.markersRepository.findByLatAndLng(lat,lng);
+    }
+
+    @Override
+    public List<Marker> getByLat(Double lat) {
+        return this.markersRepository.findByLat(lat);
+    }
+
+    @Override
+    public List<Marker> listAllMarkersBetweenLatLng(Double latmin, Double latmax, Double lngmin, Double lngmax) {
+        return this.markersRepository.findByLatBetweenAndLngBetween(latmin, latmax, lngmin, lngmax);
+    }
+
+
+}
