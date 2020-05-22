@@ -19,9 +19,8 @@ public class MarkersController {
     @Autowired
     private MarkersService markersService;
 
-    @RequestMapping(
+    @GetMapping(
             value = "findAll",
-            method = RequestMethod.GET,
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
             headers = "Accept=application/json"
     )
@@ -34,9 +33,8 @@ public class MarkersController {
         }
     }
 
-    @RequestMapping(
+    @GetMapping(
             value = "findId/{id}",
-            method = RequestMethod.GET,
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
             headers = "Accept=application/json"
         )
@@ -49,9 +47,8 @@ public class MarkersController {
         }
     }
 
-    @RequestMapping(
+    @GetMapping(
             value = "findLatLng/{lat}/{lng}",
-            method = RequestMethod.GET,
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
             headers = "Accept=application/json"
     )
@@ -64,42 +61,33 @@ public class MarkersController {
         }
     }
 
-    @RequestMapping(
-            value = "findLat/{lat}",
-            method = RequestMethod.GET,
+
+    @GetMapping(
+            value = "add/{title}/{resume}/{img}/{lat}/{lng}",
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
             headers = "Accept=application/json"
     )
-    public ResponseEntity<List<Marker>> find(@PathVariable("lat") Double lat) {
+    public ResponseEntity<Marker> add(
+            @PathVariable("title") String title,
+            @PathVariable("resume") String resume,
+            @PathVariable("img") String img,
+            @PathVariable("lat") Double lat,
+            @PathVariable("lng") Double lng
+        ) {
+        String imgCheck = img.replace('_','/');
+        Marker newMarker = new Marker();
+        newMarker.setTitle(title);
+        newMarker.setResume(resume);
+        newMarker.setImg(imgCheck);
+        newMarker.setLat(lat);
+        newMarker.setLng(lng);
         try {
-            return new ResponseEntity<List<Marker>>(
-                    markersService.getByLat(lat), HttpStatus.OK);
+
+            return new ResponseEntity<Marker>( markersService.save(newMarker)
+                    , HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-//    @GetMapping(value = "/getByLng")
-//    public List<Marker> getByLng(@RequestParam() Float lng) {
-//        List<Marker> marker = markersService.getByLng(lng);
-//        return marker;
-//    }
-
-    @GetMapping(value = "/add")
-    public void addMarker( @RequestParam() String title, @RequestParam() String resume, @RequestParam() String img, @RequestParam() Double lat, @RequestParam() Double lon ) {
-
-        Marker newMarker = new Marker();
-        newMarker.setTitle(title);
-        newMarker.setResume(resume);
-        newMarker.setImg(img);
-        newMarker.setLat(lat);
-        newMarker.setLng(lon);
-
-        try {
-            markersService.save(newMarker);
-        } catch (Exception e) {
-            e.getMessage();
-        }
-
-    }
 }
