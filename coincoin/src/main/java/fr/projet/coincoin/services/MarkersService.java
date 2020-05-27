@@ -1,7 +1,6 @@
 package fr.projet.coincoin.services;
 
 import fr.projet.coincoin.models.Marker;
-
 import java.util.List;
 
 public interface MarkersService {
@@ -20,12 +19,9 @@ public interface MarkersService {
     // CRUD : Delete
     void delete(Marker markerToDelete);
 
-    // Fonction utiliser dans le controller
-    List<Marker> getByLatLng(Double lat,Double lng);
+    // Récupère les marqueurs par une latitude et longitude fournie
+    List<Marker> getByLatLng(double lat,double lng);
 
-    // Fonction utiliser dans le controller
-    List<Marker> getByLat(Double lat);
-
-    // Fonction utiliser dans le controller
-    List<Marker> listAllMarkersBetweenLatLng(Double latmin, Double latmax ,Double lngmin, Double lngmax);
+    // Récupère les marqueurs qui sont situé entre les latitudes et longitudes fournies
+    List<Marker> listAllMarkersBetweenLatLng(double latmin, double latmax ,double lngmin, double lngmax);
 }

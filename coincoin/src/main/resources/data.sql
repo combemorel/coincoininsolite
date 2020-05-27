@@ -32,10 +32,12 @@ CREATE TABLE markers(
     marker_description VARCHAR(255) NOT NULL,
     marker_src_image VARCHAR(255) NOT NULL,
     marker_latitude DOUBLE NOT NULL,
-    marker_longitude DOUBLE NOT NULL
+    marker_longitude DOUBLE NOT NULL,
+    fk_user_id INTEGER,
+    FOREIGN KEY (fk_user_id) REFERENCES users (user_id)
 );
 
-;
+
 -- ===============================
 -- DML : Data modeling language
 -- ex: SELECT, INSERT, UPDATE, etc.
@@ -59,12 +61,13 @@ INSERT INTO markers (
     marker_description,
     marker_src_image,
     marker_latitude,
-    marker_longitude
+    marker_longitude,
+    fk_user_id
 )
 VALUES
-    ( 1, 'Marker 1','Description marker 1','/img/test.jpg',48.048286,-1.740643),
-    ( 2, 'Marker 2','Description marker 2','/img/test2.jpg',48.148286,-1.640643),
-    ( 3, 'Marker 3','Description marker 3','/img/test3.jpg',48.248286,-1.540643),
-    ( 4, 'Marker 4','Description marker 4','/img/test4.jpg',48.348286,-1.440643),
-    ( 5, 'Marker 5','Description marker 5','/img/test5.jpg',48.448286,-1.340643)
+    ( 1, 'Marker 1','Description marker 1','/img/test.jpg',48.048286,-1.740643,1),
+    ( 2, 'Marker 2','Description marker 2','/img/test2.jpg',48.148286,-1.640643,1),
+    ( 3, 'Marker 3','Description marker 3','/img/test3.jpg',48.248286,-1.540643,1),
+    ( 4, 'Marker 4','Description marker 4','/img/test4.jpg',48.348286,-1.440643,1),
+    ( 5, 'Marker 5','Description marker 5','/img/test5.jpg',48.448286,-1.340643,1)
 ;

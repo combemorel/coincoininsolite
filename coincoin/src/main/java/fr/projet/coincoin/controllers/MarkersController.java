@@ -3,13 +3,12 @@ package fr.projet.coincoin.controllers;
 import fr.projet.coincoin.models.Marker;
 import fr.projet.coincoin.models.User;
 import fr.projet.coincoin.services.MarkersService;
-import fr.projet.coincoin.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -34,7 +33,7 @@ public class MarkersController {
     }
 
     @GetMapping(
-            value = "findId/{id}",
+            value = "find/{id}",
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
             headers = "Accept=application/json"
         )
@@ -48,11 +47,11 @@ public class MarkersController {
     }
 
     @GetMapping(
-            value = "findLatLng/{lat}/{lng}",
+            value = "find/{lat}/{lng}",
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
             headers = "Accept=application/json"
     )
-    public ResponseEntity<List<Marker>> find(@PathVariable("lat") Double lat,@PathVariable("lng") Double lng) {
+    public ResponseEntity<List<Marker>> find(@PathVariable("lat") double lat,@PathVariable("lng") double lng) {
         try {
             return new ResponseEntity<List<Marker>>(
                     markersService.getByLatLng(lat,lng), HttpStatus.OK);
@@ -61,33 +60,49 @@ public class MarkersController {
         }
     }
 
-
     @GetMapping(
-            value = "add/{title}/{resume}/{img}/{lat}/{lng}",
+            value = "find/{latmin}/{lngmin}/{latmax}/{lngmax}",
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
             headers = "Accept=application/json"
     )
-    public ResponseEntity<Marker> add(
-            @PathVariable("title") String title,
-            @PathVariable("resume") String resume,
-            @PathVariable("img") String img,
-            @PathVariable("lat") Double lat,
-            @PathVariable("lng") Double lng
-        ) {
-        String imgCheck = img.replace('_','/');
-        Marker newMarker = new Marker();
-        newMarker.setTitle(title);
-        newMarker.setResume(resume);
-        newMarker.setImg(imgCheck);
-        newMarker.setLat(lat);
-        newMarker.setLng(lng);
+    public ResponseEntity<List<Marker>> find(@PathVariable("latmin") double latmin,@PathVariable("lngmin") double lngmin,@PathVariable("latmax") double latmax,@PathVariable("lngmax") double lngmax) {
         try {
+            return new ResponseEntity<List<Marker>>(
+                    markersService.listAllMarkersBetweenLatLng(latmin,latmax,lngmin,lngmax), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
-            return new ResponseEntity<Marker>( markersService.save(newMarker)
+
+    @PostMapping(value = "add",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Marker> add(Marker marker ){
+        try {
+            return new ResponseEntity<Marker>( markersService.save(marker)
                     , HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping(value = "update",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public void udpdate(Marker marker ){
+        try {
+            markersService.update(marker);
+        } catch (Exception e) {
+
+        }
+    }
+
+    @DeleteMapping(value = "delete",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public void delete(Marker marker ){
+        try {
+            markersService.delete(marker);
+
+        } catch (Exception e) {
+
+        }
+    }
+
 
 }

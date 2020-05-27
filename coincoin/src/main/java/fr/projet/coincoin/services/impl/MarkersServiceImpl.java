@@ -5,7 +5,6 @@ import fr.projet.coincoin.repositories.MarkersRepository;
 import fr.projet.coincoin.services.MarkersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class MarkersServiceImpl implements MarkersService {
         return this.markersRepository.findById(markerId).orElseGet(null);
     }
 
-    @Override
+
     @Transactional // Pour éviter une TransactionRequiredException
     public void update(Marker markerToUpdate) {
         if (this.getById(markerToUpdate.getId()) != null) {
@@ -48,19 +47,12 @@ public class MarkersServiceImpl implements MarkersService {
     }
 
     @Override
-    public List<Marker> getByLatLng(Double lat, Double lng) {
+    public List<Marker> getByLatLng(double lat, double lng) {
         return this.markersRepository.findByLatAndLng(lat,lng);
     }
 
     @Override
-    public List<Marker> getByLat(Double lat) {
-        return this.markersRepository.findByLat(lat);
-    }
-
-    @Override
-    public List<Marker> listAllMarkersBetweenLatLng(Double latmin, Double latmax, Double lngmin, Double lngmax) {
+    public List<Marker> listAllMarkersBetweenLatLng(double latmin, double latmax, double lngmin, double lngmax) {
         return this.markersRepository.findByLatBetweenAndLngBetween(latmin, latmax, lngmin, lngmax);
     }
-
-
 }

@@ -1,7 +1,6 @@
 package fr.projet.coincoin.services;
 
 import fr.projet.coincoin.models.User;
-
 import java.util.List;
 
 public interface UsersService {
@@ -18,5 +17,4 @@ public interface UsersService {
 
     // CRUD : Delete
     void delete(User userToDelete);
-
 }

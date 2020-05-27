@@ -2,32 +2,75 @@ package fr.projet.coincoin.controllers;
 
 import fr.projet.coincoin.models.Marker;
 import fr.projet.coincoin.models.User;
-import fr.projet.coincoin.services.MarkersService;
 import fr.projet.coincoin.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
 public class UsersController {
+
     @Autowired
     private UsersService usersService;
 
-    @GetMapping("/getAll")
-    public List<User> getALL() {
-        List<User> users = usersService.getAll();
-        return users;
+
+    @GetMapping(
+            value = "findAll",
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            headers = "Accept=application/json"
+    )
+    public ResponseEntity<List<User>> findAll() {
+        try {
+            return new ResponseEntity<List<User>>(
+                    usersService.getAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/getById")
-    public User getById(@RequestParam() Integer id) {
-        User user = usersService.getById(id);
-        return user;
+    @GetMapping(
+            value = "find/{id}",
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            headers = "Accept=application/json"
+    )
+    public ResponseEntity<User> findById(@PathVariable("id") Integer id) {
+        try {
+            return new ResponseEntity<User>(
+                    usersService.getById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
+    @PostMapping(value = "add",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> add(User user ){
+        try {
+            return new ResponseEntity<User>( usersService.save(user)
+                    , HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "update",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public void udpdate(User user ){
+        try {
+            usersService.update(user);
+        } catch (Exception e) {
+        }
+    }
+
+    @DeleteMapping(value = "delete",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public void delete(User user ){
+        try {
+            usersService.delete(user);
+
+        } catch (Exception e) {
+
+        }
+    }
 }
