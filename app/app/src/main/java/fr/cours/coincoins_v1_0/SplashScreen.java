@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat;
 public class SplashScreen extends Activity {
     private static int SPLASH_TIME_OUT = 1500;
     private Object MainActivity;
-    public static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 100;
     public final static int REQUEST_CODE_ONE = 1;
     public final static int REQUEST_CODE_TWO = 2;
     public final static int REQUEST_CODE_THREE = 3;

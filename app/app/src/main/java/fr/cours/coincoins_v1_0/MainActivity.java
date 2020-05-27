@@ -3,6 +3,8 @@ package fr.cours.coincoins_v1_0;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -10,13 +12,19 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -32,15 +40,25 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.owlike.genson.Genson;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 
 import java.io.IOException;
+import java.util.ListIterator;
+import java.util.Scanner;
+
+import fr.cours.coincoins_v1_0.entities.Corner;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
+    public static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 100;
     private GoogleMap myMap;
     private ProgressDialog myProgress;
     private static final String MYTAG = "MYTAG";
@@ -48,9 +66,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private ImageButton btnPicture;
 
 
-    // Request Code to ask the user for permission to view their current location (***).
-    // Value 8bit (value <256)
-    public static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 100;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -69,11 +84,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         slideModels.add(new SlideModel("https://picsum.photos/id/892/300/200","Image 3"));
         slideModels.add(new SlideModel("https://picsum.photos/id/891/300/200","Image 4"));
         imageSlider.setImageList(slideModels,true);
+
+
         // Create Progress Bar.
         myProgress = new ProgressDialog(this);
         myProgress.setTitle("Map Loading ...");
         myProgress.setMessage("Please wait...");
         myProgress.setCancelable(true);
+
+
         // Display Progress Bar.
         myProgress.show();
         searchView = findViewById(R.id.search);
@@ -81,6 +100,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment);
+
+        //  Take photo
+        btnPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, MarkerActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
 
         // barre de recherche attacher a la map
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -123,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
-
     private void onMyMapReady(GoogleMap googleMap) {
         // Get Google Map from Fragment.
         myMap = googleMap;
@@ -141,8 +170,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         myMap.getUiSettings().setZoomControlsEnabled(true);
         myMap.setMyLocationEnabled(true);
-    }
 
+    }
 
     private void askPermissionsAndShowMyLocation() {
 
@@ -176,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        //
+
         switch (requestCode) {
             case REQUEST_ID_ACCESS_COURSE_FINE_LOCATION: {
 
@@ -269,24 +298,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             myMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-
-            // Add Marker to Map
-            LatLng latLng2 = new LatLng(48.048285, -1.740643);
-            MarkerOptions option = new MarkerOptions();
-            option.title("My Location");
-            option.snippet("....");
-            option.position(latLng2);
-            Marker currentMarker = myMap.addMarker(option);
-            currentMarker.showInfoWindow();
         } else {
             Toast.makeText(this, "Location not found!", Toast.LENGTH_LONG).show();
             Log.i(MYTAG, "Location not found");
         }
-
-
     }
-
 
     @Override
     public void onLocationChanged(Location location) {
@@ -308,5 +324,62 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
+    // Chargement des markers en base de données
+    protected void onResume() {
+        super.onResume();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection = null;
+                try {
+                    URL url = new URL("http://192.168.1.18:6253/api/marker/findAll");
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+
+                    InputStream in = new BufferedInputStream( urlConnection.getInputStream() );
+                    Scanner scanner = new Scanner( in );
+
+                    final List<Corner> corners = new Genson().deserialize(scanner.nextLine(), List.class );
+                    Log.i("Exchange-JSON", "Result == " + corners );
+                    for (int i = 0; i < corners.size(); i++) {
+                        int id = i+1;
+                        String urlById = "http://192.168.1.18:6253/api/marker/find/"+ id;
+                        Log.i("Exchange-JSON", "New url => " + urlById );
+                        URL url2 = new URL(urlById);
+                        urlConnection = (HttpURLConnection) url2.openConnection();
+                        urlConnection.setRequestMethod("GET");
+
+                        InputStream in2 = new BufferedInputStream( urlConnection.getInputStream() );
+                        Scanner scanner2 = new Scanner( in2 );
+
+                        final Corner corner = new Genson().deserialize( scanner2.nextLine(), Corner.class );
+                        Log.i("Exchange-JSON", "Result == " + corners );
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                LatLng latLng = new LatLng(corner.getLat(), corner.getLng());
+                                Log.i("Exchange-JSON", "New LatLng => " + latLng.toString());
+
+                                MarkerOptions newMarker = new MarkerOptions();
+                                newMarker.title(corner.getTitle());
+                                newMarker.snippet(corner.getResume());
+                                newMarker.position(latLng);
+                                myMap.addMarker(newMarker);
+                            Log.i("Exchange-JSON", "Add New Marker => OK");
+                            }
+                        });
+                        in.close();
+                    }
+
+                }catch (Exception e) {
+                    Log.e("Exchange-JSON", "Cannot found http server", e);
+                }finally {
+                    if ( urlConnection != null ) urlConnection.disconnect();
+                }
+            }
+        }).start();
+    }
 }
 

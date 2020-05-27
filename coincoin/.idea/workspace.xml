@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8cc76253-1caa-4b60-87b8-cdd4badba956" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1c7UwklEJwef5VXyRzbSt0DcLkZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.0" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="fr.projet.coincoin.services.impl" />
+      <recent name="fr.projet.coincoin.services" />
+      <recent name="fr.projet.coincoin.repositories" />
+      <recent name="fr.projet.coincoin.controllers" />
+      <recent name="fr.projet.coincoin.models" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\project\ApiCoinCoin\coincoin\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="coincoin [clean,spring-boot:run]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+                <option value="spring-boot:run" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8cc76253-1caa-4b60-87b8-cdd4badba956" name="Default Changelist" comment="" />
+      <created>1589879365844</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1589879365844</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="163" y="0" key="#Project_Structure" timestamp="1589896963479">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="163" y="0" key="#Project_Structure/0.0.1366.738@0.0.1366.738" timestamp="1589896963479" />
+    <state x="274" y="24" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589879439993">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="274" y="24" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.738@0.0.1366.738" timestamp="1589879439993" />
+    <state x="556" y="56" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog" timestamp="1589879821776">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="556" y="56" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog/0.0.1366.738@0.0.1366.738" timestamp="1589879821776" />
+    <state x="829" y="79" key="#com.intellij.ide.util.MemberChooser" timestamp="1589964633165">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="829" y="79" key="#com.intellij.ide.util.MemberChooser/0.0.1366.738@0.0.1366.738" timestamp="1589964633165" />
+    <state x="463" y="124" key="FileChooserDialogImpl" timestamp="1590148912029">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="463" y="124" key="FileChooserDialogImpl/0.0.1366.738@0.0.1366.738" timestamp="1590148912029" />
+    <state width="1323" height="158" key="GridCell.Tab.0.bottom" timestamp="1590158599472">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="1323" height="158" key="GridCell.Tab.0.bottom/0.0.1366.738@0.0.1366.738" timestamp="1590158599472" />
+    <state width="1323" height="158" key="GridCell.Tab.0.center" timestamp="1590158599472">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="1323" height="158" key="GridCell.Tab.0.center/0.0.1366.738@0.0.1366.738" timestamp="1590158599472" />
+    <state width="1323" height="158" key="GridCell.Tab.0.left" timestamp="1590158599472">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="1323" height="158" key="GridCell.Tab.0.left/0.0.1366.738@0.0.1366.738" timestamp="1590158599472" />
+    <state width="1323" height="158" key="GridCell.Tab.0.right" timestamp="1590158599472">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="1323" height="158" key="GridCell.Tab.0.right/0.0.1366.738@0.0.1366.738" timestamp="1590158599472" />
+    <state x="213" y="24" key="Maven.ArtifactSearchDialog" timestamp="1589896504661">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="213" y="24" key="Maven.ArtifactSearchDialog/0.0.1366.738@0.0.1366.738" timestamp="1589896504661" />
+    <state width="498" height="446" key="SwitcherDM" timestamp="1589968688316">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="498" height="446" key="SwitcherDM/0.0.1366.738@0.0.1366.738" timestamp="1589968688316" />
+    <state x="574" y="59" width="672" height="678" key="search.everywhere.popup" timestamp="1589879475342">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="574" y="59" width="672" height="678" key="search.everywhere.popup/0.0.1366.738@0.0.1366.738" timestamp="1589879475342" />
+  </component>
+</project>

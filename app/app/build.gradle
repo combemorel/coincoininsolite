@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
@@ -31,5 +31,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'apache-log4j:log4j:1.2.15'
+    implementation 'com.owlike:genson:1.4'
+    implementation 'com.google.android.material:material:1.1.0'
 
 }
