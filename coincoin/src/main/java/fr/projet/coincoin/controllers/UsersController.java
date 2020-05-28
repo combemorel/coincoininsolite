@@ -5,6 +5,7 @@ import fr.projet.coincoin.models.User;
 import fr.projet.coincoin.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +47,12 @@ public class UsersController {
         }
     }
 
-    @PostMapping(value = "add",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> add(User user ){
+    @PostMapping(
+            value = "add",
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public ResponseEntity<User> add(@RequestBody User user ){
         try {
             return new ResponseEntity<User>( usersService.save(user)
                     , HttpStatus.OK);
@@ -56,16 +61,24 @@ public class UsersController {
         }
     }
 
-    @PutMapping(value = "update",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public void udpdate(User user ){
+    @PutMapping(
+            value = "update",
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public void udpdate(@RequestBody User user ){
         try {
             usersService.update(user);
         } catch (Exception e) {
         }
     }
 
-    @DeleteMapping(value = "delete",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public void delete(User user ){
+    @DeleteMapping(
+            value = "delete",
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public void delete(@RequestBody User user ){
         try {
             usersService.delete(user);
 

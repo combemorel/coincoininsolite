@@ -75,18 +75,25 @@ public class MarkersController {
     }
 
 
-    @PostMapping(value = "add",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Marker> add(Marker marker ){
+    @PostMapping(
+            value = "add",
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public ResponseEntity<Marker> add(@RequestBody Marker marker ){
         try {
-            return new ResponseEntity<Marker>( markersService.save(marker)
-                    , HttpStatus.OK);
+            return new ResponseEntity<Marker>( markersService.save(marker), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping(value = "update",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public void udpdate(Marker marker ){
+    @PutMapping(
+            value = "update",
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public void udpdate(@RequestBody Marker marker ){
         try {
             markersService.update(marker);
         } catch (Exception e) {
@@ -94,15 +101,17 @@ public class MarkersController {
         }
     }
 
-    @DeleteMapping(value = "delete",produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public void delete(Marker marker ){
+    @DeleteMapping(
+            value = "delete",
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            consumes = MediaType.ALL_VALUE
+    )
+    public void delete(@RequestBody Marker marker ){
         try {
             markersService.delete(marker);
-
         } catch (Exception e) {
 
         }
     }
-
-
+    
 }
