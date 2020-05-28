@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 
 
 public class Corner {
-    private static final Logger log = Logger.getLogger(Corner.class);
 
     private int id;
     private String title;
@@ -22,18 +21,37 @@ public class Corner {
     private String img;
     private double lat;
     private double lng;
+    private int id_user;
 
     public Corner() {
     }
-
-    public Corner(int id, String title, String resume, String img, double lat, double lng) {
+    public Corner(String title, String resume, String img, double lat, double lng, int id_user) {
+        this.title = title;
+        this.resume = resume;
+        this.img = img;
+        this.lat = lat;
+        this.lng = lng;
+        this.id_user = id_user;
+    }
+    public Corner(int id, String title, String resume, String img, double lat, double lng, int id_user) {
         this.id = id;
         this.title = title;
         this.resume = resume;
         this.img = img;
         this.lat = lat;
         this.lng = lng;
+        this.id_user = id_user;
     }
+
+
+    public int getId_user() {
+        return id_user;
+    }
+
+    public void setId_user(int id_user) {
+        this.id_user = id_user;
+    }
+
     public int getid() {
         return id;
     }
@@ -89,43 +107,9 @@ public class Corner {
                 "title='" + title + '\'' +
                 ", resume='" + resume + '\'' +
                 ", img='" + img + '\'' +
-                ", lat=" + lat +
-                ", lng=" + lng +
+                ", lat=" + lat + '\'' +
+                ", lng=" + lng + '\'' +
+                ", user_id=" + id_user +
                 '}';
     }
-//    *******  TEST 1   ****** //
-//    public static ArrayList<Corner> getMarkers() {
-//        ArrayList<Corner> corners = new ArrayList<Corner>();
-//
-//        try {
-//            String myUrl = "http://192.168.1.18:6253/api/marker/find";
-//            URL url = new URL(myUrl);
-//
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection().;
-//            connection.connect();
-//
-//            InputStream inputStream = connection.getInputStream();
-//
-//            String result = InputStreamOperations.InputStreamToString(inputStream);
-//            JSONObject jsonObject = new JSONObject(result);
-//            JSONArray array = new JSONArray(jsonObject.getString("coins"));
-//
-//            for (int i = 0; i < array.length(); i++) {
-//                JSONObject obj = new JSONObject(array.getString(i));
-//                Corner corner = new Corner();
-//                corner.setTitle(obj.getString("title"));
-//                corner.setResume(obj.getString("resume"));
-//                corner.setImg(obj.getString("img"));
-//                corner.setLat(obj.getDouble("lat"));
-//                corner.setLng(obj.getDouble("lng"));
-//
-//                corners.add(corner);
-//
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return corners;
-//    }
 }

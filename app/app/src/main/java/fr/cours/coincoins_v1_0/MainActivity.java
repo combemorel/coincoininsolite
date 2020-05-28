@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 100;
     private GoogleMap myMap;
     private ProgressDialog myProgress;
-    private static final String MYTAG = "MYTAG";
+    private static final String MYTAG = "TAG";
     private SearchView searchView;
     private ImageButton btnPicture;
 
@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
 
                     };
-
                 }
                 return false;
             }
@@ -142,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 return false;
             }
         });
-        
         // Set callback listener, on Google Map ready.
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -150,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 onMyMapReady(googleMap);
             }
         });
-
     }
 
     private void onMyMapReady(GoogleMap googleMap) {
@@ -327,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     // Chargement des markers en base de données
     protected void onResume() {
         super.onResume();
+        Log.e(MYTAG + " MainActivity", "Chargement des markers");
 
         new Thread(new Runnable() {
             @Override
@@ -341,11 +339,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     Scanner scanner = new Scanner( in );
 
                     final List<Corner> corners = new Genson().deserialize(scanner.nextLine(), List.class );
-                    Log.i("Exchange-JSON", "Result == " + corners );
                     for (int i = 0; i < corners.size(); i++) {
                         int id = i+1;
                         String urlById = "http://192.168.1.18:6253/api/marker/find/"+ id;
-                        Log.i("Exchange-JSON", "New url => " + urlById );
                         URL url2 = new URL(urlById);
                         urlConnection = (HttpURLConnection) url2.openConnection();
                         urlConnection.setRequestMethod("GET");
@@ -354,27 +350,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         Scanner scanner2 = new Scanner( in2 );
 
                         final Corner corner = new Genson().deserialize( scanner2.nextLine(), Corner.class );
-                        Log.i("Exchange-JSON", "Result == " + corners );
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
 
                                 LatLng latLng = new LatLng(corner.getLat(), corner.getLng());
-                                Log.i("Exchange-JSON", "New LatLng => " + latLng.toString());
-
                                 MarkerOptions newMarker = new MarkerOptions();
                                 newMarker.title(corner.getTitle());
                                 newMarker.snippet(corner.getResume());
                                 newMarker.position(latLng);
                                 myMap.addMarker(newMarker);
-                            Log.i("Exchange-JSON", "Add New Marker => OK");
                             }
                         });
                         in.close();
                     }
-
                 }catch (Exception e) {
-                    Log.e("Exchange-JSON", "Cannot found http server", e);
+                    Log.e(MYTAG + " RECUP ALL MARKERS", "Cannot found http server", e);
                 }finally {
                     if ( urlConnection != null ) urlConnection.disconnect();
                 }
