@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CoinCoins_V1_0</string>
+    <string name="api_key">AIzaSyCbm85UbjhTm-NcjXA4l7-5_maTBrldsLM</string>
+    <string name="desc_logo">Image du logo de la société</string>
+</resources>

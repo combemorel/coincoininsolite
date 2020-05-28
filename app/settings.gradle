@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name='CoinCoins_V1_0'

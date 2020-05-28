@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:clipToPadding="false"
+    android:visibility="visible"
+    tools:context=".MainActivity">
+
+    <com.denzcoskun.imageslider.ImageSlider
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="450dp"
+        android:addStatesFromChildren="false"
+        app:auto_cycle="true"
+        app:corner_radius="20"
+        app:delay="0"
+        app:error_image="@drawable/logo"
+        app:period="5000"
+        app:placeholder="@drawable/logo" />
+
+    <ImageButton
+        android:id="@+id/buttonPicture"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginRight="26dp"
+        android:adjustViewBounds="false"
+        android:background="#00FFFFFF"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <SearchView
+        android:id="@+id/search"
+        android:layout_width="157dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="9dp"
+        android:layout_marginLeft="9dp"
+        android:layout_marginTop="17dp"
+        android:animateLayoutChanges="false" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="104dp"
+        android:layout_height="81dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="152dp"
+        android:layout_marginLeft="153dp"
+        android:layout_marginEnd="155dp"
+        android:layout_marginRight="153dp"
+        android:contentDescription="@string/desc_logo"
+        app:srcCompat="@drawable/logo" />
+
+    <ImageView
+        android:id="@+id/background_map"
+        android:layout_width="wrap_content"
+        android:layout_height="359dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="13dp"
+        android:layout_marginLeft="13dp"
+        android:layout_marginTop="69dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginRight="14dp"
+        android:background="@drawable/border"
+        app:srcCompat="@android:color/background_light" />
+
+    <fragment
+        android:id="@+id/fragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="344dp"
+        android:layout_height="316dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="33dp"
+        android:layout_marginLeft="33dp"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="34dp"
+        android:layout_marginRight="34dp"
+        />
+
+</RelativeLayout>
