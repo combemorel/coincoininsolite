@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private ImageButton btnPicture;
 
 
-
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +75,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         //now we can create two types of slider first using viewpager
         //and another using third party library which is easy to use let's get started
-        ImageSlider imageSlider=findViewById(R.id.slider);
+        ImageSlider imageSlider = findViewById(R.id.slider);
 
-        List<SlideModel> slideModels=new ArrayList<>();
-        slideModels.add(new SlideModel("https://picsum.photos/id/896/300/200","Image 1"));
-        slideModels.add(new SlideModel("https://picsum.photos/id/894/300/200","Image 2"));
-        slideModels.add(new SlideModel("https://picsum.photos/id/892/300/200","Image 3"));
-        slideModels.add(new SlideModel("https://picsum.photos/id/891/300/200","Image 4"));
-        imageSlider.setImageList(slideModels,true);
+        List<SlideModel> slideModels = new ArrayList<>();
+        slideModels.add(new SlideModel("https://picsum.photos/id/896/300/200", "Image 1"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/894/300/200", "Image 2"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/892/300/200", "Image 3"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/891/300/200", "Image 4"));
+        imageSlider.setImageList(slideModels, true);
 
 
         // Create Progress Bar.
@@ -117,21 +116,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             @Override
             public boolean onQueryTextSubmit(String query) {
                 String location = searchView.getQuery().toString();
-                List<Address> addressList  = null;
+                List<Address> addressList = null;
 
                 if (location != null || !location.equals("")) {
-                    Geocoder geocoder = new Geocoder( MainActivity.this);
+                    Geocoder geocoder = new Geocoder(MainActivity.this);
                     try {
-                        addressList = geocoder.getFromLocationName(location,1);
+                        addressList = geocoder.getFromLocationName(location, 1);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if(addressList.size() != 0){
+                    if (addressList.size() != 0) {
                         Address address = addressList.get(0);
-                        LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-                        myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                        myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
 
-                    };
+                    }
+                    ;
                 }
                 return false;
             }
@@ -166,6 +166,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         });
         myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         myMap.getUiSettings().setZoomControlsEnabled(true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         myMap.setMyLocationEnabled(true);
 
     }
@@ -331,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("http://192.168.1.18:6253/api/marker/findAll");
+                    URL url = new URL("http://192.168.1.18:8080/api/marker/findAll");
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("GET");
 
@@ -341,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     final List<Corner> corners = new Genson().deserialize(scanner.nextLine(), List.class );
                     for (int i = 0; i < corners.size(); i++) {
                         int id = i+1;
-                        String urlById = "http://192.168.1.18:6253/api/marker/find/"+ id;
+                        String urlById = "http://192.168.1.18:8080/api/marker/find/"+ id;
                         URL url2 = new URL(urlById);
                         urlConnection = (HttpURLConnection) url2.openConnection();
                         urlConnection.setRequestMethod("GET");

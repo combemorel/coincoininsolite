@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.FileProvider;
 //import androidx.core.content.FileProvider;
 
 import com.owlike.genson.Genson;
@@ -246,7 +247,7 @@ public class MarkerActivity extends Activity implements LocationListener {
 
     // Ouvre l'appareil photo
     private void openCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        /*Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 //            // Create the File where the photo should go
             File photoFile = null;
@@ -264,22 +265,22 @@ public class MarkerActivity extends Activity implements LocationListener {
                 startActivityForResult(takePictureIntent, IMAGE_CAPTURE_CODE);
             }
 
+        }*/
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+            values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+
+            imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-//
-//        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        try {
-//            ContentValues values = new ContentValues();
-//            values.put(MediaStore.Images.Media.TITLE, "New Picture");
-//            values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
-//
-//            imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-//
-//            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-//            startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
     }
 
@@ -321,10 +322,10 @@ public class MarkerActivity extends Activity implements LocationListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            photoview.setImageBitmap(imageBitmap);
-//            photoview.setImageURI(imageUri);
+//            Bundle extras = data.getExtras();
+ //           Bitmap imageBitmap = (Bitmap) extras.get("data");
+//            photoview.setImageBitmap(imageBitmap);
+            photoview.setImageURI(imageUri);
 
         }
     }
