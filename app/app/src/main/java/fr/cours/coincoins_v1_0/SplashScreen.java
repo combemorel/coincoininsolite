@@ -57,6 +57,13 @@ public class SplashScreen extends Activity {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
+            }case REQUEST_CODE_THREE: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
             }
         }
     }
