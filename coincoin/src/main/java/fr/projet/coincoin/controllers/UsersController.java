@@ -50,7 +50,7 @@ public class UsersController {
     @PostMapping(
             value = "add",
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
-            consumes = MediaType.ALL_VALUE
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
     )
     public ResponseEntity<User> add(@RequestBody User user ){
         try {

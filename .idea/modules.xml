@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/ApiCoinCoin.iml" filepath="$PROJECT_DIR$/.idea/ApiCoinCoin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/coincoin/coincoin.iml" filepath="$PROJECT_DIR$/coincoin/coincoin.iml" />
+    </modules>
+  </component>
+</project>

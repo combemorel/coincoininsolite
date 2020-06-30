@@ -73,8 +73,7 @@ public class MarkersController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-
+    
     @PostMapping(
             value = "add",
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
