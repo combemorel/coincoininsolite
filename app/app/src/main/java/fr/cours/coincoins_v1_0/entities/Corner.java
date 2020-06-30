@@ -90,12 +90,12 @@ public class Corner {
     @Override
     public String toString() {
         return "Corner{" +
-                "id='" + id + '\'' +
-                "title='" + title + '\'' +
+                "id=" + id  +
+                ", title='" + title + '\'' +
                 ", resume='" + resume + '\'' +
                 ", img='" + img + '\'' +
-                ", lat=" + lat + '\'' +
-                ", lng=" + lng + '\'' +
+                ", lat=" + lat +
+                ", lng=" + lng +
                 ", user_id=" + id_user +
                 '}';
     }

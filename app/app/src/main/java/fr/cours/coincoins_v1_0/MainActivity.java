@@ -42,6 +42,8 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.owlike.genson.Genson;
 
+import org.json.JSONArray;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -348,21 +350,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     InputStream in = new BufferedInputStream( urlConnection.getInputStream() );
                     Scanner scanner = new Scanner( in );
 
-                    final List<Corner> corners = new Genson().deserialize(scanner.nextLine(), List.class );
+                    final List<Corner> corners = new Genson().deserialize(scanner.nextLine(), ArrayList.class );
+
                     for (int i = 0; i < corners.size(); i++) {
-                        int id = i+1;
-                        String urlById = "http://192.168.1.18:8080/api/marker/find/"+ id;
-                        URL url2 = new URL(urlById);
-                        urlConnection = (HttpURLConnection) url2.openConnection();
-                        urlConnection.setRequestMethod("GET");
-
-                        InputStream in2 = new BufferedInputStream( urlConnection.getInputStream() );
-                        Scanner scanner2 = new Scanner( in2 );
-
-                        final Corner corner = new Genson().deserialize( scanner2.nextLine(), Corner.class );
+                        final int finalI = i ;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
+                                Log.e(MYTAG + " MainActivity", String.valueOf(corners.get(finalI)));
+                                String[] strings = String.valueOf(corners.get(finalI)).replaceAll("[{} ]","").split(",");
+
+                                Corner corner = new Corner();
+                                corner.setResume(strings[0].replaceAll(".+=", ""));
+                                corner.setImg(strings[1].replaceAll(".+=", ""));
+                                corner.setLng(Double.parseDouble(strings[2].replaceAll(".+=", "")));
+                                corner.setId(Integer.parseInt(strings[3].replaceAll(".+=", "")));
+                                corner.setTitle(strings[4].replaceAll(".+=", ""));
+                                corner.setLat(Double.parseDouble(strings[5].replaceAll(".+=", "")));
+
+                                Log.e(MYTAG + " MainActivity", corner.toString());
 
                                 LatLng latLng = new LatLng(corner.getLat(), corner.getLng());
                                 MarkerOptions newMarker = new MarkerOptions();
@@ -372,7 +379,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                 myMap.addMarker(newMarker);
                             }
                         });
-                        in.close();
                     }
                 }catch (Exception e) {
                     Log.e(MYTAG + " RECUP ALL MARKERS", "Cannot found http server", e);

@@ -108,7 +108,7 @@ public class MarkerActivity extends Activity implements LocationListener {
 //                    String message = new Genson().serialize(fileToUpload);
 //                    Log.i(MYTAG + " UPLOAD IMG","message == " + message);
 //
-//                    URL url = new URL("http://192.168.1.18:6253/api/upload");
+//                    URL url = new URL("http://192.168.1.18:8080/api/uploadimg");
 //                    urlConnection = (HttpURLConnection) url.openConnection();
 //                    urlConnection.setDoOutput( true );
 //                    urlConnection.setRequestMethod("POST");
