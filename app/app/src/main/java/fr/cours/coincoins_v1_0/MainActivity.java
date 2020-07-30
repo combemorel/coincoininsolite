@@ -3,7 +3,6 @@ package fr.cours.coincoins_v1_0;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -12,19 +11,14 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -35,28 +29,23 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
-import com.owlike.genson.Genson;
 
-import org.json.JSONArray;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 
 import java.io.IOException;
-import java.util.ListIterator;
-import java.util.Scanner;
 
-import fr.cours.coincoins_v1_0.entities.Corner;
+import fr.cours.coincoins_v1_0.ws.MarkerWs;
+import fr.cours.coincoins_v1_0.ws.RetrofitSingleton;
+import fr.cours.coincoins_v1_0.ws.WSInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -334,59 +323,40 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     // Chargement des markers en base de données
+
     protected void onResume() {
         super.onResume();
-        Log.e(MYTAG + " MainActivity", "Chargement des markers");
 
-        new Thread(new Runnable() {
+        WSInterface service = RetrofitSingleton.getRetrofitInstance().create(WSInterface.class);
+        Call<List<MarkerWs>> call = service.getAllMarkers();
+
+        call.enqueue(new Callback<List<MarkerWs>>() {
             @Override
-            public void run() {
-                HttpURLConnection urlConnection = null;
-                try {
-                    URL url = new URL("http://192.168.1.18:8080/api/marker/findAll");
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
+            public void onResponse(Call<List<MarkerWs>> call, Response<List<MarkerWs>> response) {
 
-                    InputStream in = new BufferedInputStream( urlConnection.getInputStream() );
-                    Scanner scanner = new Scanner( in );
+                if (response.isSuccessful()){
+                    List<MarkerWs> retourws = response.body();
+                    if(retourws != null){
+                        for (MarkerWs markerWs: retourws) {
+                            LatLng latLng = new LatLng(markerWs.getLat(), markerWs.getLng());
+                            MarkerOptions newMarker = new MarkerOptions();
+                            newMarker.title(markerWs.getTitle());
+                            newMarker.snippet(markerWs.getResume());
+                            newMarker.position(latLng);
+                            myMap.addMarker(newMarker);
 
-                    final List<Corner> corners = new Genson().deserialize(scanner.nextLine(), ArrayList.class );
-
-                    for (int i = 0; i < corners.size(); i++) {
-                        final int finalI = i ;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                Log.e(MYTAG + " MainActivity", String.valueOf(corners.get(finalI)));
-                                String[] strings = String.valueOf(corners.get(finalI)).replaceAll("[{} ]","").split(",");
-
-                                Corner corner = new Corner();
-                                corner.setResume(strings[0].replaceAll(".+=", ""));
-                                corner.setImg(strings[1].replaceAll(".+=", ""));
-                                corner.setLng(Double.parseDouble(strings[2].replaceAll(".+=", "")));
-                                corner.setId(Integer.parseInt(strings[3].replaceAll(".+=", "")));
-                                corner.setTitle(strings[4].replaceAll(".+=", ""));
-                                corner.setLat(Double.parseDouble(strings[5].replaceAll(".+=", "")));
-
-                                Log.e(MYTAG + " MainActivity", corner.toString());
-
-                                LatLng latLng = new LatLng(corner.getLat(), corner.getLng());
-                                MarkerOptions newMarker = new MarkerOptions();
-                                newMarker.title(corner.getTitle());
-                                newMarker.snippet(corner.getResume());
-                                newMarker.position(latLng);
-                                myMap.addMarker(newMarker);
-                            }
-                        });
+                        }
                     }
-                }catch (Exception e) {
-                    Log.e(MYTAG + " RECUP ALL MARKERS", "Cannot found http server", e);
-                }finally {
-                    if ( urlConnection != null ) urlConnection.disconnect();
+
                 }
             }
-        }).start();
+
+            @Override
+            public void onFailure(Call<List<MarkerWs>> call, Throwable t) {
+
+                Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
 
