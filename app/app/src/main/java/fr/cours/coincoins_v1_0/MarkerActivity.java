@@ -25,6 +25,8 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 //import androidx.core.content.FileProvider;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.owlike.genson.Genson;
 
 import java.io.BufferedReader;
@@ -37,8 +39,15 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import fr.cours.coincoins_v1_0.entities.Corner;
+import fr.cours.coincoins_v1_0.ws.MarkerWs;
+import fr.cours.coincoins_v1_0.ws.RetrofitSingleton;
+import fr.cours.coincoins_v1_0.ws.WSInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MarkerActivity extends Activity implements LocationListener {
@@ -81,16 +90,14 @@ public class MarkerActivity extends Activity implements LocationListener {
 
         textUserId.setText("1");
 
-        btnPost.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try{
+        btnPost.setOnClickListener(v -> {
+            try{
 //                        postImage();
-                    textImg.setText(imageUri.getPath());
-                    postCorner();
+                textImg.setText(imageUri.getPath());
+                postCorner();
 
-                } catch (Exception e ) {
-                    Log.i(MYTAG + " ONCLICK", "erreur", e);
-                }
+            } catch (Exception e ) {
+                Log.i(MYTAG + " ONCLICK", "erreur", e);
             }
         });
     }
@@ -142,59 +149,94 @@ public class MarkerActivity extends Activity implements LocationListener {
 //        return result[0];
 //    }
 
-    protected void postCorner() {
+    void postCorner() {
         Log.i(MYTAG + " postCorner","POST NEW MARKER" );
-        new Thread(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void run() {
-                Corner mark = new Corner(
-                    textTitle.getText().toString(),
-                    textResume.getText().toString(),
-                    textImg.getText().toString(),
-                    Double.parseDouble(textLat.getText().toString()),
-                    Double.parseDouble(textLng.getText().toString()),
-                    Integer.parseInt(textUserId.getText().toString())
-                );
+        textImg.setText(imageUri.getPath());
 
-                String message = new Genson().serialize(mark);
+        WSInterface service = RetrofitSingleton.getRetrofitInstance().create(WSInterface.class);
+        MarkerWs marker = new MarkerWs(textTitle.getText().toString(),
+                textResume.getText().toString(),
+                textImg.getText().toString(),
+                Double.parseDouble(textLat.getText().toString()),
+                Double.parseDouble(textLng.getText().toString()),
+                Integer.parseInt(textUserId.getText().toString())
+            );
+        Call<MarkerWs> call = service.postMaker(marker);
 
-                HttpURLConnection urlConnection = null;
-                try {
-                    URL url = new URL("http://192.168.1.18:8080/api/marker/add");
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setDoOutput( true );
-                    urlConnection.setRequestMethod("POST");
-                    urlConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
-                    urlConnection.setRequestProperty("Accept", "application/json");
+        call.enqueue(new Callback<MarkerWs>() {
+             @Override
+             public void onResponse(Call<MarkerWs> call, Response<MarkerWs> response) {
+                 Log.d(MYTAG + " postCorner","post");
+                 if (response.isSuccessful()) {
+                     Toast.makeText(MarkerActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+                 } else {
+                     Toast.makeText(MarkerActivity.this, "OK", Toast.LENGTH_SHORT).show();
+                 }
+                 Intent i = new Intent(MarkerActivity.this, MainActivity.class);
+                 startActivity(i);
+                 finish();
+             }
 
-                    OutputStream out = urlConnection.getOutputStream();
-                    out.write(message.getBytes(StandardCharsets.UTF_8));
-                    out.close();
+             @Override
+             public void onFailure(Call<MarkerWs> call, Throwable t) {
 
-                    if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
-                            String line;
-                            while ((line = bufferedReader.readLine()) != null) {
-                                Log.i(MYTAG + " ONCLICK","Line == " + line);
-                            }
-                        }
-                    } else {
-                        Log.i(MYTAG + " postCorner","urlConnection.getResponseCode == BAD_REQUEST"+ urlConnection.getResponseCode());
-
-                    }
-
-                    Intent i = new Intent(MarkerActivity.this, MainActivity.class);
-                    startActivity(i);
-                    finish();
-
-                }catch (Exception e) {
-                    Log.e(MYTAG + " postCorner", "Cannot found http server", e);
-                }finally {
-                    if ( urlConnection != null ) urlConnection.disconnect();
-                }
-            }
-        }).start();
+                 Toast.makeText(MarkerActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+                 Intent i = new Intent(MarkerActivity.this, MainActivity.class);
+                 startActivity(i);
+                 finish();
+             }
+        });
+//            new Thread(new Runnable() {
+//            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//            @Override
+//            public void run() {
+//                Corner mark = new Corner(
+//                    textTitle.getText().toString(),
+//                    textResume.getText().toString(),
+//                    textImg.getText().toString(),
+//                    Double.parseDouble(textLat.getText().toString()),
+//                    Double.parseDouble(textLng.getText().toString()),
+//                    Integer.parseInt(textUserId.getText().toString())
+//                );
+//
+//                String message = new Genson().serialize(mark);
+//
+//                HttpURLConnection urlConnection = null;
+//                try {
+//                    URL url = new URL("http://192.168.1.18:8080/api/marker/add");
+//                    urlConnection = (HttpURLConnection) url.openConnection();
+//                    urlConnection.setDoOutput( true );
+//                    urlConnection.setRequestMethod("POST");
+//                    urlConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
+//                    urlConnection.setRequestProperty("Accept", "application/json");
+//
+//                    OutputStream out = urlConnection.getOutputStream();
+//                    out.write(message.getBytes(StandardCharsets.UTF_8));
+//                    out.close();
+//
+//                    if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+//                        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+//                            String line;
+//                            while ((line = bufferedReader.readLine()) != null) {
+//                                Log.i(MYTAG + " ONCLICK","Line == " + line);
+//                            }
+//                        }
+//                    } else {
+//                        Log.i(MYTAG + " postCorner","urlConnection.getResponseCode == BAD_REQUEST"+ urlConnection.getResponseCode());
+//
+//                    }
+//
+//                    Intent i = new Intent(MarkerActivity.this, MainActivity.class);
+//                    startActivity(i);
+//                    finish();
+//
+//                }catch (Exception e) {
+//                    Log.e(MYTAG + " postCorner", "Cannot found http server", e);
+//                }finally {
+//                    if ( urlConnection != null ) urlConnection.disconnect();
+//                }
+//            }
+//        }).start();
 
     }
 

@@ -17,6 +17,15 @@ public class MarkerWs {
     private int id_user;
 
 
+    public MarkerWs(String title, String resume, String img, double lat, double lng, int id_user) {
+        this.title = title;
+        this.resume = resume;
+        this.img = img;
+        this.lat = lat;
+        this.lng = lng;
+        this.id_user = id_user;
+    }
+
     public int getId() {
         return id;
     }
