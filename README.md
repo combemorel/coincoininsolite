@@ -4,7 +4,7 @@ Pour lancer l’application :
 Démarrer l’api  
 Changer l’ip dans Application.properties 
  
-Déroulement du projet: 
+# Déroulement du projet: 
  
 Nous étions une équipe de 5 personnes composer de deux B3 et de trois B2. 
 Les B3 de notre équipe étaient chargé de rédiger les documentations techniques du projet tandis que le groupe de B3 composé de Dorian COMBEMOREL, de Martin POTTIER et de Rémy HAVEZ avaient pour objectif de coder l’application avec des fonctionnalités qui étaient définies dans une sorte de cahier des charges. 
@@ -27,7 +27,7 @@ Ce projet c’est presque entièrement déroulé dans l’optique de l’auto-fo
 À la suite de certains de ces cours nous avons fait évoluer notre code pour qu’il colle mieux aux bonnes pratiques que nous avions abordées. 
 Par exemple nous avons utilisé les notions de notre cour d’ORM en les adaptant à notre code mais aussi la gestion de web service que nous avons aborder dans l’un des derniers module de cours qui nous permet de mieux structurer notre code.  
  #
-Ce que l’on voulait au début : 
+# Ce que l’on voulait au début : 
 - Prendre des photos  
 - Carrousel qui affiche les coins les plus proches 
 - Barre de recherche pour la carte 
@@ -37,7 +37,7 @@ Ce que l’on voulait au début :
 - Partie Administration (gestion des marker) 
 - Validation des markers par l’administrateur 
   #
-Ce que l’on a fait : 
+# Ce que l’on a fait : 
 - Ajout des Markers (Coins) sans les photos 
 - Affichage de la carte avec les markers sur la carte  
 - Affichage du carrousel qui n’affiche pas les photos des markers les plus proches 
