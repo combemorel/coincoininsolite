@@ -1,4 +1,4 @@
-# Coin Coin Insolite
+# Coin Coin Insolite.   Dorian COMBEMOREL, de Martin POTTIER et de Rémy HAVEZ
 
 Pour lancer l’application : 
 Démarrer l’api  
@@ -7,7 +7,7 @@ Changer l’ip dans Application.properties
 # Déroulement du projet: 
  
 Nous étions une équipe de 5 personnes composer de deux B3 et de trois B2. 
-Les B3 de notre équipe étaient chargé de rédiger les documentations techniques du projet tandis que le groupe de B3 composé de Dorian COMBEMOREL, de Martin POTTIER et de Rémy HAVEZ avaient pour objectif de coder l’application avec des fonctionnalités qui étaient définies dans une sorte de cahier des charges. 
+Les B3 de notre équipe étaient chargé de rédiger les documentations techniques du projet tandis que le groupe de B2 composé de Dorian COMBEMOREL, de Martin POTTIER et de Rémy HAVEZ avaient pour objectif de coder l’application avec des fonctionnalités qui étaient définies dans une sorte de cahier des charges. 
 Lors de la Première étape de ce projet nous avons aidé à rédiger les documentations techniques et les premières maquettes de ce projet. 
 En parallèle nous réfléchissions à la manière dont nous allions coder cette application, au langage que nous allions choisir ainsi qu’à tous les aspects techniques que nous allions mettre en œuvre pour la mener à bien.  
 Malheureusement nous n’avions pas vraiment de bonnes cartes en main aucun de nous 3 n’avais de compétences en développement applicatif.  
