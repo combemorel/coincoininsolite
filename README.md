@@ -26,14 +26,14 @@ Ce projet c’est presque entièrement déroulé dans l’optique de l’auto-fo
 Par exemple nous avons utilisé les notions de notre cour d’ORM en les adaptant à notre code mais aussi la gestion de web service que nous avons aborder dans l’un des derniers module de cours qui nous permet de mieux structurer notre code.  
  
 Ce que l’on voulait au début : 
-Prendre des photos  
-Carrousel qui affiche les coins les plus proches 
-Barre de recherche pour la carte 
-Mettre une note sur un coin (Marker ) 
-Affichage de la liste des notes avec les commentaires ou non  
-Partie Utilisateur 
-Partie Administration (gestion des marker) 
-Validation des markers par l’administrateur 
+- Prendre des photos  
+- Carrousel qui affiche les coins les plus proches 
+- Barre de recherche pour la carte 
+- Mettre une note sur un coin (Marker ) 
+- Affichage de la liste des notes avec les commentaires ou non  
+- Partie Utilisateur 
+- Partie Administration (gestion des marker) 
+- Validation des markers par l’administrateur 
   
 Ce que l’on a fait : 
 - Ajout des Markers (Coins) sans les photos 
