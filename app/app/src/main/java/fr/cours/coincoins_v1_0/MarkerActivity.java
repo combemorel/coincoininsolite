@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,6 +12,8 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -20,27 +23,42 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.FileProvider;
+//import androidx.core.content.FileProvider;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.owlike.genson.Genson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import fr.cours.coincoins_v1_0.entities.Corner;
+import fr.cours.coincoins_v1_0.ws.MarkerWs;
+import fr.cours.coincoins_v1_0.ws.RetrofitSingleton;
+import fr.cours.coincoins_v1_0.ws.WSInterface;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MarkerActivity extends Activity implements LocationListener {
 
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
-    private static final String MYTAG = "TAG";
+    private static final String MYTAG = "TEST";
 
     private ImageView photoview;
     private EditText textTitle;
@@ -51,12 +69,20 @@ public class MarkerActivity extends Activity implements LocationListener {
     private EditText textUserId;
 
     Uri imageUri;
+    String currentPhotoPath;
 
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_marker);
+        init();
+        showMyLocation();
+        openCamera();
+
+    }
+
+    private void init(){
         photoview = findViewById(R.id.imageView);
         textTitle = findViewById(R.id.textTitle);
         textResume = findViewById(R.id.textResume);
@@ -66,74 +92,141 @@ public class MarkerActivity extends Activity implements LocationListener {
         textUserId = findViewById(R.id.textUserId);
         Button btnPost = findViewById(R.id.button_post);
 
-
-        showMyLocation();
-        openCamera();
-
-        textImg.setText(imageUri.getPath());
         textUserId.setText("1");
 
-        btnPost.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.i(MYTAG + " ONCLICK","Click button" );
+        btnPost.setOnClickListener(v -> {
+            try{
+//                postImage();
+                textImg.setText(imageUri.getPath());
                 postCorner();
+
+            } catch (Exception e ) {
+                Log.i(MYTAG + " ONCLICK", "erreur", e);
             }
         });
     }
+//    private boolean postImage() {
+//        Log.i(MYTAG + " UPLOAD IMG","Start");
+////        final boolean[] result = {false};
+////        new Thread(new Runnable() {
+////            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+////            @Override
+////            public void run() {
+////                HttpURLConnection urlConnection = null;
+////                String fileName = image.toString();
+////                try {
+////
+////                    String message = new Genson().serialize(fileToUpload);
+////                    Log.i(MYTAG + " UPLOAD IMG","message == " + message);
+////
+////                    URL url = new URL("http://192.168.1.18:8080/api/uploadimg");
+////                    urlConnection = (HttpURLConnection) url.openConnection();
+////                    urlConnection.setDoOutput( true );
+////                    urlConnection.setRequestMethod("POST");
+////                    urlConnection.setRequestProperty("Content-Type", "multipart/form-data");
+////                    urlConnection.setRequestProperty("ENCTYPE", "multipart/form-data");
+////                    urlConnection.setRequestProperty("uploaded_file", fileName);
+////
+////                    OutputStream out = urlConnection.getOutputStream();
+////                    out.write(message.getBytes());
+////                    out.close();
+////
+////                    if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+////                        result[0] = true;
+////                        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+////                            String line;
+////                            while ((line = bufferedReader.readLine()) != null) {
+////                                Log.i(MYTAG + " UPLOAD IMG", "Line == " + line);
+////                            }
+////                        }
+////                    } else {
+////                        Log.i(MYTAG + " UPLOAD IMG","urlConnection.getResponseCode == BAD_REQUEST"+ urlConnection.getResponseCode());
+////                    }
+////
+////                }catch (Exception e) {
+////                    Log.e(MYTAG + " UPLOAD IMG", "Cannot found http server", e);
+////                }finally {
+////                    if ( urlConnection != null ) urlConnection.disconnect();
+////                }
+////            }
+////        }).start();
+//
+//        File imgFile = new File(imageUri.getPath());
+//
+//        // create RequestBody instance from file
+//        RequestBody requestFile = RequestBody.create(
+//                        MediaType.parse(getContentResolver().getType(imageUri)),
+//                    imgFile
+//                );
+//
+//        // MultipartBody.Part is used to send also the actual file name
+//        MultipartBody.Part body = MultipartBody.Part.createFormData("file", imgFile.getName(), requestFile);
+//
+//
+//        WSInterface service = RetrofitSingleton.getRetrofitInstance().create(WSInterface.class);
+//        Call<MarkerWs> call = service.postImage(body);
+//        Log.d(MYTAG + " postImage", String.valueOf(call));
+//
+//        call.enqueue(new Callback<MarkerWs>() {
+//            @Override
+//            public void onResponse(Call<MarkerWs> call, Response<MarkerWs> response) {
+//                Log.d(MYTAG + " postImage","post");
+//                if (!response.isSuccessful()) {
+//                    Toast.makeText(MarkerActivity.this, "Response not successful", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(MarkerActivity.this, "OK", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<MarkerWs> call, Throwable t) {
+//
+//                Toast.makeText(MarkerActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
+//
+//        return false;
+//    }
 
-    protected void postCorner() {
-        Log.i(MYTAG + " MarkerActivity","POST NEW MARKER" );
-        new Thread(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void run() {
-                Corner mark = new Corner(
-                    textTitle.getText().toString(),
-                    textResume.getText().toString(),
-                    textImg.getText().toString(),
-                    Double.parseDouble(textLat.getText().toString()),
-                    Double.parseDouble(textLng.getText().toString()),
-                    Integer.parseInt(textUserId.getText().toString())
-                );
+    void postCorner() {
+        Log.i(MYTAG + " postCorner","POST NEW MARKER" );
+        textImg.setText(imageUri.getPath());
 
-                String message = new Genson().serialize(mark);
+        WSInterface service = RetrofitSingleton.getRetrofitInstance().create(WSInterface.class);
+        MarkerWs marker = new MarkerWs(0,textTitle.getText().toString(),
+                textResume.getText().toString(),
+                textImg.getText().toString(),
+                Double.parseDouble(textLat.getText().toString()),
+                Double.parseDouble(textLng.getText().toString()),
+                Integer.parseInt(textUserId.getText().toString())
+            );
 
-                HttpURLConnection urlConnection = null;
-                try {
-                    URL url = new URL("http://192.168.1.18:6253/api/marker/add");
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setDoOutput( true );
-                    urlConnection.setRequestMethod("POST");
-                    urlConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
-                    urlConnection.setRequestProperty("Accept", "application/json");
+        Call<MarkerWs> call = service.postMaker(marker);
 
-                    OutputStream out = urlConnection.getOutputStream();
-                    out.write(message.getBytes(StandardCharsets.UTF_8));
-                    out.close();
+        call.enqueue(new Callback<MarkerWs>() {
+             @Override
+             public void onResponse(Call<MarkerWs> call, Response<MarkerWs> response) {
+                 Log.d(MYTAG + " postCorner","post");
+                 if (!response.isSuccessful()) {
+                     Toast.makeText(MarkerActivity.this, "Response not successful", Toast.LENGTH_SHORT).show();
+                 } else {
+                     Toast.makeText(MarkerActivity.this, "OK", Toast.LENGTH_SHORT).show();
+                 }
+                 Intent i = new Intent(MarkerActivity.this, MainActivity.class);
+                 startActivity(i);
+                 finish();
+             }
 
-                    if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
-                            String line;
-                            while ((line = bufferedReader.readLine()) != null) {
-                                Log.i(MYTAG + " ONCLICK","Line == " + line);
-                            }
-                        }
-                    } else {
-                        Log.i(MYTAG + " ONCLICK","urlConnection.getResponseCode == BAD_REQUEST"+ urlConnection.getResponseCode());
+             @Override
+             public void onFailure(Call<MarkerWs> call, Throwable t) {
 
-                    }
-
-                    Intent i = new Intent(MarkerActivity.this, MainActivity.class);
-                    startActivity(i);
-                    finish();
-
-                }catch (Exception e) {
-                    Log.e(MYTAG + " ONCLICK", "Cannot found http server", e);
-                }finally {
-                    if ( urlConnection != null ) urlConnection.disconnect();
-                }
-            }
-        }).start();
+                 Toast.makeText(MarkerActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                 Intent i = new Intent(MarkerActivity.this, MainActivity.class);
+                 startActivity(i);
+                 finish();
+             }
+        });
 
     }
 
@@ -186,15 +279,57 @@ public class MarkerActivity extends Activity implements LocationListener {
 
     // Ouvre l'appareil photo
     private void openCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+        /*Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
 
-        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "fr.cours.coincoins_v1_0.provider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, IMAGE_CAPTURE_CODE);
+            }
+
+        }*/
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
+        try {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+            values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+
+            imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PNG_" + timeStamp + "";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".png",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
@@ -217,10 +352,13 @@ public class MarkerActivity extends Activity implements LocationListener {
     // Après la photo on affiche l'image prise dans le imageView
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-//        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK) {
+//            Bundle extras = data.getExtras();
+ //           Bitmap imageBitmap = (Bitmap) extras.get("data");
+//            photoview.setImageBitmap(imageBitmap);
             photoview.setImageURI(imageUri);
+
         }
     }
 

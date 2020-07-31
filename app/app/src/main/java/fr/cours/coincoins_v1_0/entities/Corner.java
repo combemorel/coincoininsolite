@@ -1,18 +1,5 @@
 package fr.cours.coincoins_v1_0.entities;
 
-import org.apache.log4j.Logger;
-
-
-// *******  TEST 1   ****** //
-//import org.json.JSONArray;
-//import org.json.JSONObject;
-//import java.io.InputStream;
-//import java.net.HttpURLConnection;
-//import java.net.URL;
-//import java.util.ArrayList;
-//import fr.cours.coincoins_v1_0.utils.InputStreamOperations;
-
-
 public class Corner {
 
     private int id;
@@ -103,12 +90,12 @@ public class Corner {
     @Override
     public String toString() {
         return "Corner{" +
-                "id='" + id + '\'' +
-                "title='" + title + '\'' +
+                "id=" + id  +
+                ", title='" + title + '\'' +
                 ", resume='" + resume + '\'' +
                 ", img='" + img + '\'' +
-                ", lat=" + lat + '\'' +
-                ", lng=" + lng + '\'' +
+                ", lat=" + lat +
+                ", lng=" + lng +
                 ", user_id=" + id_user +
                 '}';
     }

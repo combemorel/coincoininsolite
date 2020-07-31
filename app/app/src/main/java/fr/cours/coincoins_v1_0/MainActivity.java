@@ -3,7 +3,6 @@ package fr.cours.coincoins_v1_0;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -12,19 +11,14 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -35,26 +29,23 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
-import com.owlike.genson.Genson;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 
 import java.io.IOException;
-import java.util.ListIterator;
-import java.util.Scanner;
 
-import fr.cours.coincoins_v1_0.entities.Corner;
+import fr.cours.coincoins_v1_0.ws.MarkerWs;
+import fr.cours.coincoins_v1_0.ws.RetrofitSingleton;
+import fr.cours.coincoins_v1_0.ws.WSInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -66,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private ImageButton btnPicture;
 
 
-
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +66,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         //now we can create two types of slider first using viewpager
         //and another using third party library which is easy to use let's get started
-        ImageSlider imageSlider=findViewById(R.id.slider);
+        ImageSlider imageSlider = findViewById(R.id.slider);
 
-        List<SlideModel> slideModels=new ArrayList<>();
-        slideModels.add(new SlideModel("https://picsum.photos/id/896/300/200","Image 1"));
-        slideModels.add(new SlideModel("https://picsum.photos/id/894/300/200","Image 2"));
-        slideModels.add(new SlideModel("https://picsum.photos/id/892/300/200","Image 3"));
-        slideModels.add(new SlideModel("https://picsum.photos/id/891/300/200","Image 4"));
-        imageSlider.setImageList(slideModels,true);
+        List<SlideModel> slideModels = new ArrayList<>();
+        slideModels.add(new SlideModel("https://picsum.photos/id/896/300/200", "Image 1"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/894/300/200", "Image 2"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/892/300/200", "Image 3"));
+        slideModels.add(new SlideModel("https://picsum.photos/id/891/300/200", "Image 4"));
+        imageSlider.setImageList(slideModels, true);
 
 
         // Create Progress Bar.
@@ -117,21 +107,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             @Override
             public boolean onQueryTextSubmit(String query) {
                 String location = searchView.getQuery().toString();
-                List<Address> addressList  = null;
+                List<Address> addressList = null;
 
                 if (location != null || !location.equals("")) {
-                    Geocoder geocoder = new Geocoder( MainActivity.this);
+                    Geocoder geocoder = new Geocoder(MainActivity.this);
                     try {
-                        addressList = geocoder.getFromLocationName(location,1);
+                        addressList = geocoder.getFromLocationName(location, 1);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if(addressList.size() != 0){
+                    if (addressList.size() != 0) {
                         Address address = addressList.get(0);
-                        LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-                        myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                        myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
 
-                    };
+                    }
+                    ;
                 }
                 return false;
             }
@@ -166,6 +157,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         });
         myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         myMap.getUiSettings().setZoomControlsEnabled(true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         myMap.setMyLocationEnabled(true);
 
     }
@@ -322,55 +323,40 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     // Chargement des markers en base de données
+
     protected void onResume() {
         super.onResume();
-        Log.e(MYTAG + " MainActivity", "Chargement des markers");
 
-        new Thread(new Runnable() {
+        WSInterface service = RetrofitSingleton.getRetrofitInstance().create(WSInterface.class);
+        Call<List<MarkerWs>> call = service.getAllMarkers();
+
+        call.enqueue(new Callback<List<MarkerWs>>() {
             @Override
-            public void run() {
-                HttpURLConnection urlConnection = null;
-                try {
-                    URL url = new URL("http://192.168.1.18:6253/api/marker/findAll");
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
+            public void onResponse(Call<List<MarkerWs>> call, Response<List<MarkerWs>> response) {
 
-                    InputStream in = new BufferedInputStream( urlConnection.getInputStream() );
-                    Scanner scanner = new Scanner( in );
+                if (response.isSuccessful()){
+                    List<MarkerWs> retourws = response.body();
+                    if(retourws != null){
+                        for (MarkerWs markerWs: retourws) {
+                            LatLng latLng = new LatLng(markerWs.getLat(), markerWs.getLng());
+                            MarkerOptions newMarker = new MarkerOptions();
+                            newMarker.title(markerWs.getTitle());
+                            newMarker.snippet(markerWs.getResume());
+                            newMarker.position(latLng);
+                            myMap.addMarker(newMarker);
 
-                    final List<Corner> corners = new Genson().deserialize(scanner.nextLine(), List.class );
-                    for (int i = 0; i < corners.size(); i++) {
-                        int id = i+1;
-                        String urlById = "http://192.168.1.18:6253/api/marker/find/"+ id;
-                        URL url2 = new URL(urlById);
-                        urlConnection = (HttpURLConnection) url2.openConnection();
-                        urlConnection.setRequestMethod("GET");
-
-                        InputStream in2 = new BufferedInputStream( urlConnection.getInputStream() );
-                        Scanner scanner2 = new Scanner( in2 );
-
-                        final Corner corner = new Genson().deserialize( scanner2.nextLine(), Corner.class );
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                LatLng latLng = new LatLng(corner.getLat(), corner.getLng());
-                                MarkerOptions newMarker = new MarkerOptions();
-                                newMarker.title(corner.getTitle());
-                                newMarker.snippet(corner.getResume());
-                                newMarker.position(latLng);
-                                myMap.addMarker(newMarker);
-                            }
-                        });
-                        in.close();
+                        }
                     }
-                }catch (Exception e) {
-                    Log.e(MYTAG + " RECUP ALL MARKERS", "Cannot found http server", e);
-                }finally {
-                    if ( urlConnection != null ) urlConnection.disconnect();
+
                 }
             }
-        }).start();
+
+            @Override
+            public void onFailure(Call<List<MarkerWs>> call, Throwable t) {
+
+                Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
 
