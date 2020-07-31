@@ -36,8 +36,8 @@ Partie Administration (gestion des marker)
 Validation des markers par l’administrateur 
   
 Ce que l’on a fait : 
-Ajout des Markers (Coins) sans les photos 
-Affichage de la carte avec les markers sur la carte  
-Affichage du carrousel qui n’affiche pas les photos des markers les plus proches 
-Possibilité d’ajouter un marker par le biais du logo d’appareil photo 
-Possibilité de faire une recherche par le nom d’une ville  
+- Ajout des Markers (Coins) sans les photos 
+- Affichage de la carte avec les markers sur la carte  
+- Affichage du carrousel qui n’affiche pas les photos des markers les plus proches 
+- Possibilité d’ajouter un marker par le biais du logo d’appareil photo 
+- Possibilité de faire une recherche par le nom d’une ville  
