@@ -45,6 +45,8 @@ import fr.cours.coincoins_v1_0.entities.Corner;
 import fr.cours.coincoins_v1_0.ws.MarkerWs;
 import fr.cours.coincoins_v1_0.ws.RetrofitSingleton;
 import fr.cours.coincoins_v1_0.ws.WSInterface;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -101,8 +103,8 @@ public class MarkerActivity extends Activity implements LocationListener {
             }
         });
     }
-//    private boolean postImage() {
-//        Log.i(MYTAG + " UPLOAD IMG","Start");
+    private boolean postImage() {
+        Log.i(MYTAG + " UPLOAD IMG","Start");
 //        final boolean[] result = {false};
 //        new Thread(new Runnable() {
 //            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -146,29 +148,30 @@ public class MarkerActivity extends Activity implements LocationListener {
 //                }
 //            }
 //        }).start();
-//        return result[0];
-//    }
+        return false;
+    }
 
     void postCorner() {
         Log.i(MYTAG + " postCorner","POST NEW MARKER" );
         textImg.setText(imageUri.getPath());
 
         WSInterface service = RetrofitSingleton.getRetrofitInstance().create(WSInterface.class);
-        MarkerWs marker = new MarkerWs(textTitle.getText().toString(),
+        MarkerWs marker = new MarkerWs(0,textTitle.getText().toString(),
                 textResume.getText().toString(),
                 textImg.getText().toString(),
                 Double.parseDouble(textLat.getText().toString()),
                 Double.parseDouble(textLng.getText().toString()),
                 Integer.parseInt(textUserId.getText().toString())
             );
+
         Call<MarkerWs> call = service.postMaker(marker);
 
         call.enqueue(new Callback<MarkerWs>() {
              @Override
              public void onResponse(Call<MarkerWs> call, Response<MarkerWs> response) {
                  Log.d(MYTAG + " postCorner","post");
-                 if (response.isSuccessful()) {
-                     Toast.makeText(MarkerActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+                 if (!response.isSuccessful()) {
+                     Toast.makeText(MarkerActivity.this, "Response not successful", Toast.LENGTH_SHORT).show();
                  } else {
                      Toast.makeText(MarkerActivity.this, "OK", Toast.LENGTH_SHORT).show();
                  }
@@ -180,63 +183,12 @@ public class MarkerActivity extends Activity implements LocationListener {
              @Override
              public void onFailure(Call<MarkerWs> call, Throwable t) {
 
-                 Toast.makeText(MarkerActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(MarkerActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
                  Intent i = new Intent(MarkerActivity.this, MainActivity.class);
                  startActivity(i);
                  finish();
              }
         });
-//            new Thread(new Runnable() {
-//            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//            @Override
-//            public void run() {
-//                Corner mark = new Corner(
-//                    textTitle.getText().toString(),
-//                    textResume.getText().toString(),
-//                    textImg.getText().toString(),
-//                    Double.parseDouble(textLat.getText().toString()),
-//                    Double.parseDouble(textLng.getText().toString()),
-//                    Integer.parseInt(textUserId.getText().toString())
-//                );
-//
-//                String message = new Genson().serialize(mark);
-//
-//                HttpURLConnection urlConnection = null;
-//                try {
-//                    URL url = new URL("http://192.168.1.18:8080/api/marker/add");
-//                    urlConnection = (HttpURLConnection) url.openConnection();
-//                    urlConnection.setDoOutput( true );
-//                    urlConnection.setRequestMethod("POST");
-//                    urlConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
-//                    urlConnection.setRequestProperty("Accept", "application/json");
-//
-//                    OutputStream out = urlConnection.getOutputStream();
-//                    out.write(message.getBytes(StandardCharsets.UTF_8));
-//                    out.close();
-//
-//                    if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-//                        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
-//                            String line;
-//                            while ((line = bufferedReader.readLine()) != null) {
-//                                Log.i(MYTAG + " ONCLICK","Line == " + line);
-//                            }
-//                        }
-//                    } else {
-//                        Log.i(MYTAG + " postCorner","urlConnection.getResponseCode == BAD_REQUEST"+ urlConnection.getResponseCode());
-//
-//                    }
-//
-//                    Intent i = new Intent(MarkerActivity.this, MainActivity.class);
-//                    startActivity(i);
-//                    finish();
-//
-//                }catch (Exception e) {
-//                    Log.e(MYTAG + " postCorner", "Cannot found http server", e);
-//                }finally {
-//                    if ( urlConnection != null ) urlConnection.disconnect();
-//                }
-//            }
-//        }).start();
 
     }
 
