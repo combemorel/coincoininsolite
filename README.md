@@ -1,4 +1,5 @@
-# Coin Coin Insolite.   Dorian COMBEMOREL, de Martin POTTIER et de Rémy HAVEZ
+# Coin Coin Insolite  
+# Dorian COMBEMOREL, de Martin POTTIER et de Rémy HAVEZ
 
 Pour lancer l’application : 
 Démarrer l’api  
