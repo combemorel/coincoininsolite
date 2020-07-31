@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +46,7 @@ import fr.cours.coincoins_v1_0.entities.Corner;
 import fr.cours.coincoins_v1_0.ws.MarkerWs;
 import fr.cours.coincoins_v1_0.ws.RetrofitSingleton;
 import fr.cours.coincoins_v1_0.ws.WSInterface;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -94,7 +96,7 @@ public class MarkerActivity extends Activity implements LocationListener {
 
         btnPost.setOnClickListener(v -> {
             try{
-//                        postImage();
+//                postImage();
                 textImg.setText(imageUri.getPath());
                 postCorner();
 
@@ -103,53 +105,89 @@ public class MarkerActivity extends Activity implements LocationListener {
             }
         });
     }
-    private boolean postImage() {
-        Log.i(MYTAG + " UPLOAD IMG","Start");
-//        final boolean[] result = {false};
-//        new Thread(new Runnable() {
-//            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//    private boolean postImage() {
+//        Log.i(MYTAG + " UPLOAD IMG","Start");
+////        final boolean[] result = {false};
+////        new Thread(new Runnable() {
+////            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+////            @Override
+////            public void run() {
+////                HttpURLConnection urlConnection = null;
+////                String fileName = image.toString();
+////                try {
+////
+////                    String message = new Genson().serialize(fileToUpload);
+////                    Log.i(MYTAG + " UPLOAD IMG","message == " + message);
+////
+////                    URL url = new URL("http://192.168.1.18:8080/api/uploadimg");
+////                    urlConnection = (HttpURLConnection) url.openConnection();
+////                    urlConnection.setDoOutput( true );
+////                    urlConnection.setRequestMethod("POST");
+////                    urlConnection.setRequestProperty("Content-Type", "multipart/form-data");
+////                    urlConnection.setRequestProperty("ENCTYPE", "multipart/form-data");
+////                    urlConnection.setRequestProperty("uploaded_file", fileName);
+////
+////                    OutputStream out = urlConnection.getOutputStream();
+////                    out.write(message.getBytes());
+////                    out.close();
+////
+////                    if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+////                        result[0] = true;
+////                        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+////                            String line;
+////                            while ((line = bufferedReader.readLine()) != null) {
+////                                Log.i(MYTAG + " UPLOAD IMG", "Line == " + line);
+////                            }
+////                        }
+////                    } else {
+////                        Log.i(MYTAG + " UPLOAD IMG","urlConnection.getResponseCode == BAD_REQUEST"+ urlConnection.getResponseCode());
+////                    }
+////
+////                }catch (Exception e) {
+////                    Log.e(MYTAG + " UPLOAD IMG", "Cannot found http server", e);
+////                }finally {
+////                    if ( urlConnection != null ) urlConnection.disconnect();
+////                }
+////            }
+////        }).start();
+//
+//        File imgFile = new File(imageUri.getPath());
+//
+//        // create RequestBody instance from file
+//        RequestBody requestFile = RequestBody.create(
+//                        MediaType.parse(getContentResolver().getType(imageUri)),
+//                    imgFile
+//                );
+//
+//        // MultipartBody.Part is used to send also the actual file name
+//        MultipartBody.Part body = MultipartBody.Part.createFormData("file", imgFile.getName(), requestFile);
+//
+//
+//        WSInterface service = RetrofitSingleton.getRetrofitInstance().create(WSInterface.class);
+//        Call<MarkerWs> call = service.postImage(body);
+//        Log.d(MYTAG + " postImage", String.valueOf(call));
+//
+//        call.enqueue(new Callback<MarkerWs>() {
 //            @Override
-//            public void run() {
-//                HttpURLConnection urlConnection = null;
-//                String fileName = image.toString();
-//                try {
-//
-//                    String message = new Genson().serialize(fileToUpload);
-//                    Log.i(MYTAG + " UPLOAD IMG","message == " + message);
-//
-//                    URL url = new URL("http://192.168.1.18:8080/api/uploadimg");
-//                    urlConnection = (HttpURLConnection) url.openConnection();
-//                    urlConnection.setDoOutput( true );
-//                    urlConnection.setRequestMethod("POST");
-//                    urlConnection.setRequestProperty("Content-Type", "multipart/form-data");
-//                    urlConnection.setRequestProperty("ENCTYPE", "multipart/form-data");
-//                    urlConnection.setRequestProperty("uploaded_file", fileName);
-//
-//                    OutputStream out = urlConnection.getOutputStream();
-//                    out.write(message.getBytes());
-//                    out.close();
-//
-//                    if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-//                        result[0] = true;
-//                        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
-//                            String line;
-//                            while ((line = bufferedReader.readLine()) != null) {
-//                                Log.i(MYTAG + " UPLOAD IMG", "Line == " + line);
-//                            }
-//                        }
-//                    } else {
-//                        Log.i(MYTAG + " UPLOAD IMG","urlConnection.getResponseCode == BAD_REQUEST"+ urlConnection.getResponseCode());
-//                    }
-//
-//                }catch (Exception e) {
-//                    Log.e(MYTAG + " UPLOAD IMG", "Cannot found http server", e);
-//                }finally {
-//                    if ( urlConnection != null ) urlConnection.disconnect();
+//            public void onResponse(Call<MarkerWs> call, Response<MarkerWs> response) {
+//                Log.d(MYTAG + " postImage","post");
+//                if (!response.isSuccessful()) {
+//                    Toast.makeText(MarkerActivity.this, "Response not successful", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(MarkerActivity.this, "OK", Toast.LENGTH_SHORT).show();
 //                }
 //            }
-//        }).start();
-        return false;
-    }
+//
+//            @Override
+//            public void onFailure(Call<MarkerWs> call, Throwable t) {
+//
+//                Toast.makeText(MarkerActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
+//
+//        return false;
+//    }
 
     void postCorner() {
         Log.i(MYTAG + " postCorner","POST NEW MARKER" );
